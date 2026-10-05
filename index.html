@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内部资源库</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #eef6ff;
+    color: #222;
+  }
+
+  /* 顶部导航 */
+  .nav {
+    display: flex;
+    background: #1976d2;
+  }
+  .nav button {
+    flex: 1;
+    border: none;
+    background: none;
+    color: #fff;
+    padding: 16px 0;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .nav button.active {
+    background: #0d47a1;
+    font-weight: bold;
+  }
+
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 28px 20px;
+  }
+  .hidden { display: none; }
+
+  h1 {
+    color: #1976d2;
+    font-size: 22px;
+    margin-bottom: 20px;
+    border-left: 5px solid #1976d2;
+    padding-left: 10px;
+  }
+
+  /* 资源卡片 */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #bbdefb;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .card .label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #1976d2;
+  }
+  .card .name {
+    font-size: 15px;
+    color: #000;
+  }
+  .card .link {
+    font-size: 15px;
+    color: #1976d2;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .card .link:hover {
+    text-decoration: underline;
+  }
+
+  /* 关于作者 */
+  .about p {
+    background: #fff;
+    border-left: 4px solid #1976d2;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+
+  <!-- 导航 -->
+  <div class="nav">
+    <button id="btn-res" class="active" onclick="show('res')">资源库</button>
+    <button id="btn-about" onclick="show('about')">关于</button>
+  </div>
+
+  <!-- 资源库页面 -->
+  <section id="res" class="section">
+    <h1>资源库（持续更新）</h1>
+    <div class="grid">
+
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">Windows8预览版</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/d1mEF6</a>
+      </div>
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">Windows7简易版32位</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/odxMCX</a>
+      </div>
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">WindowsXP</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/g7mjcz</a>
+      </div>
+      <div class="card">
+        <div class="label">磁盘</div>
+        <div class="name">16GB空磁盘</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/8QzOcB</a>
+      </div>
+      <div class="card">
+        <div class="label">磁盘</div>
+        <div class="name">32GB空磁盘</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/n2m1tq</a>
+      </div>
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">Windows7 64位-群主特供</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/3MJQTv</a>
+      </div>
+      <div class="card">
+        <div class="label">ISO（第三方）</div>
+        <div class="name">想要ISO的去下面，复制ed2k去迅雷免登录下载</div>
+        <a class="link" href="#">https://next.itellyou.cn/Original/Index</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">驱动总裁压缩版</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/MOl0TB</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">WinRAR</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/LplpHe</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">WinRAR备用</div>
+        <a class="link" href="#">https://pan.sysri.cn/s/W0l2t4</a>
+      </div>
+
+      <div class="card">
+        <div class="label">第十一个资源</div>
+        <div class="name">请输入第十一个资源的名字</div>
+        <a class="link" href="#">请输入第十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十二个资源</div>
+        <div class="name">请输入第十二个资源的名字</div>
+        <a class="link" href="#">请输入第十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十三个资源</div>
+        <div class="name">请输入第十三个资源的名字</div>
+        <a class="link" href="#">请输入第十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十四个资源</div>
+        <div class="name">请输入第十四个资源的名字</div>
+        <a class="link" href="#">请输入第十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十五个资源</div>
+        <div class="name">请输入第十五个资源的名字</div>
+        <a class="link" href="#">请输入第十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十六个资源</div>
+        <div class="name">请输入第十六个资源的名字</div>
+        <a class="link" href="#">请输入第十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十七个资源</div>
+        <div class="name">请输入第十七个资源的名字</div>
+        <a class="link" href="#">请输入第十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十八个资源</div>
+        <div class="name">请输入第十八个资源的名字</div>
+        <a class="link" href="#">请输入第十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十九个资源</div>
+        <div class="name">请输入第十九个资源的名字</div>
+        <a class="link" href="#">请输入第十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十个资源</div>
+        <div class="name">请输入第二十个资源的名字</div>
+        <a class="link" href="#">请输入第二十个资源的链接</a>
+      </div>
+
+      <div class="card">
+        <div class="label">第二十一个资源</div>
+        <div class="name">请输入第二十一个资源的名字</div>
+        <a class="link" href="#">请输入第二十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十二个资源</div>
+        <div class="name">请输入第二十二个资源的名字</div>
+        <a class="link" href="#">请输入第二十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十三个资源</div>
+        <div class="name">请输入第二十三个资源的名字</div>
+        <a class="link" href="#">请输入第二十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十四个资源</div>
+        <div class="name">请输入第二十四个资源的名字</div>
+        <a class="link" href="#">请输入第二十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十五个资源</div>
+        <div class="name">请输入第二十五个资源的名字</div>
+        <a class="link" href="#">请输入第二十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十六个资源</div>
+        <div class="name">请输入第二十六个资源的名字</div>
+        <a class="link" href="#">请输入第二十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十七个资源</div>
+        <div class="name">请输入第二十七个资源的名字</div>
+        <a class="link" href="#">请输入第二十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十八个资源</div>
+        <div class="name">请输入第二十八个资源的名字</div>
+        <a class="link" href="#">请输入第二十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十九个资源</div>
+        <div class="name">请输入第二十九个资源的名字</div>
+        <a class="link" href="#">请输入第二十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十个资源</div>
+        <div class="name">请输入第三十个资源的名字</div>
+        <a class="link" href="#">请输入第三十个资源的链接</a>
+      </div>
+
+      <div class="card">
+        <div class="label">第三十一个资源</div>
+        <div class="name">请输入第三十一个资源的名字</div>
+        <a class="link" href="#">请输入第三十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十二个资源</div>
+        <div class="name">请输入第三十二个资源的名字</div>
+        <a class="link" href="#">请输入第三十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十三个资源</div>
+        <div class="name">请输入第三十三个资源的名字</div>
+        <a class="link" href="#">请输入第三十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十四个资源</div>
+        <div class="name">请输入第三十四个资源的名字</div>
+        <a class="link" href="#">请输入第三十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十五个资源</div>
+        <div class="name">请输入第三十五个资源的名字</div>
+        <a class="link" href="#">请输入第三十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十六个资源</div>
+        <div class="name">请输入第三十六个资源的名字</div>
+        <a class="link" href="#">请输入第三十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十七个资源</div>
+        <div class="name">请输入第三十七个资源的名字</div>
+        <a class="link" href="#">请输入第三十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十八个资源</div>
+        <div class="name">请输入第三十八个资源的名字</div>
+        <a class="link" href="#">请输入第三十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十九个资源</div>
+        <div class="name">请输入第三十九个资源的名字</div>
+        <a class="link" href="#">请输入第三十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十个资源</div>
+        <div class="name">请输入第四十个资源的名字</div>
+        <a class="link" href="#">请输入第四十个资源的链接</a>
+      </div>
+
+      <div class="card">
+        <div class="label">第四十一个资源</div>
+        <div class="name">请输入第四十一个资源的名字</div>
+        <a class="link" href="#">请输入第四十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十二个资源</div>
+        <div class="name">请输入第四十二个资源的名字</div>
+        <a class="link" href="#">请输入第四十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十三个资源</div>
+        <div class="name">请输入第四十三个资源的名字</div>
+        <a class="link" href="#">请输入第四十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十四个资源</div>
+        <div class="name">请输入第四十四个资源的名字</div>
+        <a class="link" href="#">请输入第四十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十五个资源</div>
+        <div class="name">请输入第四十五个资源的名字</div>
+        <a class="link" href="#">请输入第四十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十六个资源</div>
+        <div class="name">请输入第四十六个资源的名字</div>
+        <a class="link" href="#">请输入第四十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十七个资源</div>
+        <div class="name">请输入第四十七个资源的名字</div>
+        <a class="link" href="#">请输入第四十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十八个资源</div>
+        <div class="name">请输入第四十八个资源的名字</div>
+        <a class="link" href="#">请输入第四十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十九个资源</div>
+        <div class="name">请输入第四十九个资源的名字</div>
+        <a class="link" href="#">请输入第四十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第五十个资源</div>
+        <div class="name">请输入第五十个资源的名字</div>
+        <a class="link" href="#">请输入第五十个资源的链接</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 关于作者页面 -->
+  <section id="about" class="section hidden">
+    <h1>关于作者</h1>
+    <div class="about">
+      <p>昵称：叶枫,SYSTEM-WIN11-JOEEY</p>
+      <p>喜欢：Minecraft，Windows虚拟机</p>
+      <p>个人简介：我是一个人，已开智</p>
+      <p>擅长领域：Minecraft和一些虚拟机</p>
+      <p>所在地：神秘的东方大国</p>
+      <p>联系方式：l12i_m3edu_oc@hotmail.com</p>
+      <p>站点说明：小红书找@SYSTEM-WIN11-JOEEY，加他的群</p>
+    </div>
+  </section>
+
+<script>
+  function show(page) {
+    document.getElementById('res').classList.toggle('hidden', page !== 'res');
+    document.getElementById('about').classList.toggle('hidden', page !== 'about');
+    document.getElementById('btn-res').classList.toggle('active', page === 'res');
+    document.getElementById('btn-about').classList.toggle('active', page === 'about');
+  }
+</script>
+
+</body>
+</html>
