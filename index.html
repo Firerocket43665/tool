@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内部资源库</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #eef6ff;
+    color: #222;
+  }
+
+  /* 顶部栏 */
+  .topbar {
+    display: flex;
+    align-items: center;
+    background: #1976d2;
+    height: 52px;
+    padding: 0 12px;
+    gap: 12px;
+  }
+  .menu-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topbar .brand {
+    color: #fff;
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  /* 侧边栏遮罩 */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s;
+    z-index: 10;
+  }
+  .overlay.show { opacity: 1; visibility: visible; }
+
+  /* 左侧弹出选择框 */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 260px;
+    background: #0d2339;
+    color: #c9d6e3;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 20;
+    overflow-y: auto;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar .side-head {
+    padding: 16px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+    border-bottom: 1px solid #1c3a55;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sidebar .side-head .close-x {
+    cursor: pointer;
+    color: #8fa8bf;
+    font-size: 20px;
+  }
+  .sidebar nav { padding: 8px 0; }
+  .sidebar nav a {
+    display: block;
+    padding: 12px 18px;
+    color: #c9d6e3;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+  }
+  .sidebar nav a:hover { background: #16324d; color: #fff; }
+  .sidebar nav a.active {
+    background: #16324d;
+    color: #fff;
+    border-left-color: #1976d2;
+  }
+
+  /* 页面主体 */
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+  .hidden { display: none; }
+
+  h1 {
+    color: #1976d2;
+    font-size: 22px;
+    margin-bottom: 20px;
+    border-left: 5px solid #1976d2;
+    padding-left: 10px;
+  }
+
+  /* 页面顶部红色提示框 */
+  .top-note {
+    max-width: 960px;
+    margin: 0 auto 14px;
+    padding: 8px 12px;
+    border: 2px solid #e53935;
+    color: #e53935;
+    background: #fff5f5;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* 资源卡片 */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #bbdefb;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .card .label { font-size: 14px; font-weight: bold; color: #1976d2; }
+  .card .name { font-size: 15px; color: #000; }
+  .card .link {
+    font-size: 15px; color: #1976d2; text-decoration: none; word-break: break-all;
+  }
+  .card .link:hover { text-decoration: underline; }
+
+  /* 公告栏大框 */
+  .notice {
+    background: #fff;
+    border: 1px solid #bbdefb;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .notice h2 { font-size: 16px; color: #1976d2; margin-bottom: 10px; }
+  .notice .box {
+    min-height: 140px;
+    border: 1px dashed #90caf9;
+    padding: 14px;
+    color: #90a4ae;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* 广告栏 */
+  .ad-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 640px) { .ad-grid { grid-template-columns: 1fr 1fr; } }
+  .ad-card {
+    background: #fff;
+    border: 1px solid #bbdefb;
+    padding: 14px;
+  }
+  .ad-card h2 { font-size: 15px; color: #1976d2; margin-bottom: 8px; }
+  .ad-card .box {
+    min-height: 90px;
+    border: 1px dashed #90caf9;
+    padding: 12px;
+    color: #90a4ae;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* 关于 */
+  .about p {
+    background: #fff;
+    border-left: 4px solid #1976d2;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #333;
+  }
+
+  /* ===== 批评名单页专用样式 ===== */
+  .critic-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .critic-tabs .tab-btn {
+    border: 1px solid #bbdefb;
+    background: #fff;
+    color: #1976d2;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .critic-tabs .tab-btn.active {
+    background: #1976d2;
+    color: #fff;
+    border-color: #1976d2;
+  }
+  .critic-tabs .tab-btn.key {
+    border-color: #e53935;
+    color: #e53935;
+    background: #fff5f5;
+    font-weight: bold;
+  }
+  .critic-tabs .tab-btn.key.active {
+    background: #e53935;
+    color: #fff;
+  }
+  .critic-panel {
+    background: #fff;
+    border: 1px solid #bbdefb;
+    padding: 18px;
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  .critic-panel .uname {
+    font-weight: bold;
+    color: #1976d2;
+  }
+  .critic-panel.key .uname {
+    color: #e53935;
+  }
+  .critic-panel .reason {
+    color: #333;
+    margin-top: 6px;
+  }
+  .critic-panel.hidden { display: none; }
+  /* ===== 结束 ===== */
+</style>
+</head>
+<body>
+
+  <!-- 顶部栏 -->
+  <div class="topbar">
+    <button class="menu-btn" onclick="toggleSide()">☰</button>
+    <span class="brand">内部资源库</span>
+  </div>
+
+  <!-- 遮罩 -->
+  <div class="overlay" id="overlay" onclick="toggleSide(false)"></div>
+
+  <!-- 左侧弹出选择框 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <span>导航菜单</span>
+      <span class="close-x" onclick="toggleSide(false)">×</span>
+    </div>
+    <nav>
+      <a data-page="res" class="active" onclick="go(this,'res')">资源库（持续更新）</a>
+      <a data-page="notice" onclick="go(this,'notice')">公告栏</a>
+      <a data-page="ad" onclick="go(this,'ad')">广告栏</a>
+      <a data-page="critic" onclick="go(this,'critic')">批评名单</a>
+      <a data-page="about" onclick="go(this,'about')">关于</a>
+    </nav>
+  </aside>
+
+  <!-- 资源库 -->
+  <section id="res" class="section">
+    <div class="top-note">网站只是工具，不要让工具成为你们的新话题</div>
+    <h1>资源库（持续更新）</h1>
+    <div class="grid">
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">Windows8预览版</div>
+        <a class="link" href="https://pan.sysri.cn/s/d1mEF6" target="_blank" rel="noopener">https://pan.sysri.cn/s/d1mEF6</a>
+      </div>
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">Windows7简易版32位</div>
+        <a class="link" href="https://pan.sysri.cn/s/odxMCX" target="_blank" rel="noopener">https://pan.sysri.cn/s/odxMCX</a>
+      </div>
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">WindowsXP</div>
+        <a class="link" href="https://pan.sysri.cn/s/g7mjcz" target="_blank" rel="noopener">https://pan.sysri.cn/s/g7mjcz</a>
+      </div>
+      <div class="card">
+        <div class="label">磁盘</div>
+        <div class="name">16GB空磁盘</div>
+        <a class="link" href="https://pan.sysri.cn/s/8QzOcB" target="_blank" rel="noopener">https://pan.sysri.cn/s/8QzOcB</a>
+      </div>
+      <div class="card">
+        <div class="label">磁盘</div>
+        <div class="name">32GB空磁盘</div>
+        <a class="link" href="https://pan.sysri.cn/s/n2m1tq" target="_blank" rel="noopener">https://pan.sysri.cn/s/n2m1tq</a>
+      </div>
+      <div class="card">
+        <div class="label">系统</div>
+        <div class="name">Windows7 64位-群主特供</div>
+        <a class="link" href="https://pan.sysri.cn/s/3MJQTv" target="_blank" rel="noopener">https://pan.sysri.cn/s/3MJQTv</a>
+      </div>
+      <div class="card">
+        <div class="label">ISO（第三方）</div>
+        <div class="name">想要ISO的去下面，复制ed2k去迅雷免登录下载</div>
+        <a class="link" href="https://next.itellyou.cn/Original/Index" target="_blank" rel="noopener">https://next.itellyou.cn/Original/Index</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">驱动总裁压缩版</div>
+        <a class="link" href="https://pan.sysri.cn/s/MOl0TB" target="_blank" rel="noopener">https://pan.sysri.cn/s/MOl0TB</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">WinRAR</div>
+        <a class="link" href="https://pan.sysri.cn/s/LplpHe" target="_blank" rel="noopener">https://pan.sysri.cn/s/LplpHe</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">WinRAR备用</div>
+        <a class="link" href="https://pan.sysri.cn/s/W0l2t4" target="_blank" rel="noopener">https://pan.sysri.cn/s/W0l2t4</a>
+      </div>
+      <div class="card">
+        <div class="label">[私人订制]系统</div>
+        <div class="name">Windows10随机镜像开箱即用（群友煜*抽奖获得）</div>
+        <a class="link" href="https://1849956140.share.123pan.cn/123pan/pA4mvd-zmLS3" target="_blank" rel="noopener">https://1849956140.share.123pan.cn/123pan/pA4mvd-zmLS3</a>
+      </div>
+      <div class="card">
+        <div class="label">软件</div>
+        <div class="name">适用于Windows7的360极速浏览器（口碑很垃圾，谨慎）</div>
+        <a class="link" href="https://pan.sysri.cn/s/Z9J0s7" target="_blank" rel="noopener">https://pan.sysri.cn/s/Z9J0s7</a>
+      </div>
+
+      <!-- 第13~50：未填链接，点击跳空页面 -->
+      <div class="card">
+        <div class="label">第十三个资源</div>
+        <div class="name">请输入第十三个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十四个资源</div>
+        <div class="name">请输入第十四个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十五个资源</div>
+        <div class="name">请输入第十五个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十六个资源</div>
+        <div class="name">请输入第十六个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十七个资源</div>
+        <div class="name">请输入第十七个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十八个资源</div>
+        <div class="name">请输入第十八个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第十九个资源</div>
+        <div class="name">请输入第十九个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十个资源</div>
+        <div class="name">请输入第二十个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十一个资源</div>
+        <div class="name">请输入第二十一个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十二个资源</div>
+        <div class="name">请输入第二十二个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十三个资源</div>
+        <div class="name">请输入第二十三个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十四个资源</div>
+        <div class="name">请输入第二十四个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十五个资源</div>
+        <div class="name">请输入第二十五个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十六个资源</div>
+        <div class="name">请输入第二十六个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十七个资源</div>
+        <div class="name">请输入第二十七个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十八个资源</div>
+        <div class="name">请输入第二十八个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第二十九个资源</div>
+        <div class="name">请输入第二十九个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第二十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十个资源</div>
+        <div class="name">请输入第三十个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十一个资源</div>
+        <div class="name">请输入第三十一个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十二个资源</div>
+        <div class="name">请输入第三十二个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十三个资源</div>
+        <div class="name">请输入第三十三个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十四个资源</div>
+        <div class="name">请输入第三十四个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十五个资源</div>
+        <div class="name">请输入第三十五个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十六个资源</div>
+        <div class="name">请输入第三十六个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十七个资源</div>
+        <div class="name">请输入第三十七个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十八个资源</div>
+        <div class="name">请输入第三十八个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第三十九个资源</div>
+        <div class="name">请输入第三十九个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第三十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十个资源</div>
+        <div class="name">请输入第四十个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十一个资源</div>
+        <div class="name">请输入第四十一个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十一个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十二个资源</div>
+        <div class="name">请输入第四十二个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十二个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十三个资源</div>
+        <div class="name">请输入第四十三个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十三个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十四个资源</div>
+        <div class="name">请输入第四十四个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十四个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十五个资源</div>
+        <div class="name">请输入第四十五个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十五个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十六个资源</div>
+        <div class="name">请输入第四十六个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十六个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十七个资源</div>
+        <div class="name">请输入第四十七个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十七个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十八个资源</div>
+        <div class="name">请输入第四十八个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十八个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第四十九个资源</div>
+        <div class="name">请输入第四十九个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第四十九个资源的链接</a>
+      </div>
+      <div class="card">
+        <div class="label">第五十个资源</div>
+        <div class="name">请输入第五十个资源的名字</div>
+        <a class="link" href="about:blank" target="_blank" rel="noopener">请输入第五十个资源的链接</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 公告栏 -->
+  <section id="notice" class="section hidden">
+    <div class="top-note">严厉点名批评所有攀比网站的人！！！</div>
+    <h1>公告栏</h1>
+    <div class="notice">
+      <h2>站主有话说...</h2>
+      <div class="box">本网站使用GNU 3.0开源协议，本网站源代码和其存储在内的网络数据盘分享链接，均为本站主和联合站主持有，您可以免费分发给任何中国大陆境内的用户，但是必须做以适当的署名或者标注。您不得从本网站存储的任何信息中谋利（倒卖），请根据您所在国家的现行法律法规正确使用本网站的功能，如有违反规则引起的一切直接，间接后果，本网站不承担任何形式的责任和赔偿。最终解释权归站主和联合站主所有。此外，最近群里很多人开始讨论网站，请不要让网站成为新话题，攀比之心不可有！！！站主：YeFeng，联合站主：SYSTEM-WIN11-JOEEY</div>
+    </div>
+  </section>
+
+  <!-- 广告栏 -->
+  <section id="ad" class="section hidden">
+    <div class="top-note">攀比之心不可有，不要让我们的群聊失去它原本的话题</div>
+    <h1>广告栏（搞笑性质，无实际意义）</h1>
+    <div class="ad-grid">
+      <div class="ad-card">
+        <h2>出闲置</h2>
+        <div class="box">闲置空气，299g，有意者联系，价格面谈。联系方式：1917788123</div>
+      </div>
+      <div class="ad-card">
+        <h2>闲置求人</h2>
+        <div class="box">自用的苹果，富士山牌子的，512g的，现在还能用，有意者加我114514114514</div>
+      </div>
+      <div class="ad-card">
+        <h2>MC服务器招人</h2>
+        <div class="box">158656658，找我</div>
+      </div>
+      <div class="ad-card">
+        <h2>广告位招租</h2>
+        <div class="box">请输入广告内容…</div>
+      </div>
+      <div class="ad-card" style="grid-column:1/-1;">
+        <h2>广告位招租</h2>
+        <div class="box">请输入广告内容…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 批评名单（新增） -->
+  <section id="critic" class="section hidden">
+    <div class="top-note">以下人员因脱离资源主题、强行攀比建站被记录，前三项为重点批评，xxx为没有上榜</div>
+    <h1>批评名单（Demo）</h1>
+    <div class="critic-tabs">
+      <button class="tab-btn key active" onclick="switchCritic(this,0)">1号</button>
+      <button class="tab-btn key" onclick="switchCritic(this,1)">2号</button>
+      <button class="tab-btn key" onclick="switchCritic(this,2)">3号</button>
+      <button class="tab-btn" onclick="switchCritic(this,3)">4号</button>
+      <button class="tab-btn" onclick="switchCritic(this,4)">5号</button>
+      <button class="tab-btn" onclick="switchCritic(this,5)">6号</button>
+      <button class="tab-btn" onclick="switchCritic(this,6)">7号</button>
+      <button class="tab-btn" onclick="switchCritic(this,7)">8号</button>
+      <button class="tab-btn" onclick="switchCritic(this,8)">9号</button>
+      <button class="tab-btn" onclick="switchCritic(this,9)">10号</button>
+    </div>
+
+    <div id="criticPanels">
+      <div class="critic-panel key">
+        <div class="uname">W****_Xiao****（重点批评）</div>
+        <div class="reason">在群内公开发布自己的个人网站链接，违反群规，跑题，严重批评</div>
+      </div>
+      <div class="critic-panel key hidden">
+        <div class="uname">地***line****（重点批评）</div>
+        <div class="reason">在群内公开发布自己的网站链接，跑题行为，严重批评</div>
+      </div>
+      <div class="critic-panel key hidden">
+        <div class="uname">叶*（技***）（重点批评）</div>
+        <div class="reason">此次事件的根源，特大通报批评，永不下榜</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+      <div class="critic-panel hidden">
+        <div class="uname">xxx</div>
+        <div class="reason">xxx</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 关于 -->
+  <section id="about" class="section hidden">
+    <div class="top-note">工具是工具，当工具没有了工具的初衷，那它还是工具吗？</div>
+    <h1>关于</h1>
+    <div class="about">
+      <p>站主：YeFeng（叶枫）</p>
+      <p>联合站主：SYSTEM-WIN11-JOEEY</p>
+      <p>站主喜欢：Minecraft，Windows虚拟机</p>
+      <p>站主个人简介：我是一个人，已开智</p>
+      <p>站主擅长领域：Minecraft和一些虚拟机</p>
+      <p>站主所在地：神秘的东方大国</p>
+      <p>站主联系方式：l12i_m3edu_oc@hotmail.com</p>
+      <p>联合站主联系方式：wananyouxi1@outlook.com</p>
+      <p>站点说明：小红书找@SYSTEM-WIN11-JOEEY，加他的群获取详情</p>
+    </div>
+  </section>
+
+<script>
+  function toggleSide(force) {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('overlay');
+    const open = force !== undefined ? force : !sb.classList.contains('open');
+    sb.classList.toggle('open', open);
+    ov.classList.toggle('show', open);
+  }
+
+  function go(el, page) {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(page).classList.remove('hidden');
+    document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+    toggleSide(false);
+  }
+
+  function switchCritic(btn, idx) {
+    const btns = btn.parentNode.querySelectorAll('.tab-btn');
+    const panels = document.getElementById('criticPanels').querySelectorAll('.critic-panel');
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    panels.forEach((p, i) => {
+      if (i === idx) { p.classList.remove('hidden'); }
+      else { p.classList.add('hidden'); }
+    });
+  }
+</script>
+
+</body>
+</html>
